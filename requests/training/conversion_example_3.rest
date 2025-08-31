@@ -1,0 +1,55 @@
+
+POST http://127.0.0.1:8000/template/example
+Content-Type: application/json
+
+{
+    "alias": "converte_dados_simples_em_complexo_2",
+    "description": "Transforma estrutura simples em saída de vários níveis com dados internos.",
+    "input": {
+        "usuario_id": "usr123",
+        "nome_usuario": "joao_silva",
+        "email_usuario": "joao.silva@example.com",
+        "endereco_rua": "Rua das Flores",
+        "endereco_numero": 123,
+        "endereco_cidade": "São Paulo",
+        "endereco_estado": "SP",
+        "pedido_id": "ped456",
+        "pedido_data": "2024-08-29",
+        "pedido_total": 150.75,
+        "produto_id": "prod789",
+        "produto_nome": "Fone de Ouvido Bluetooth",
+        "produto_quantidade": 1,
+        "produto_preco": 150.75
+    },
+    "output": {
+        "usuario": {
+            "id": "usr123",
+            "login": "joao_silva",
+            "contato": {
+                "email": "joao.silva@example.com"
+            },
+            "endereco": {
+                "rua": "Rua das Flores",
+                "numero": 123,
+                "cidade": "São Paulo",
+                "estado": "SP"
+            }
+        },
+        "pedido": {
+            "id": "ped456",
+            "data": "2024-08-29",
+            "valor_total": 150.75,
+            "itens": [
+                {
+                    "produto": {
+                        "id": "prod789",
+                        "nome": "Fone de Ouvido Bluetooth"
+                    },
+                    "quantidade": 1,
+                    "preco_unitario": 150.75
+                }
+            ]
+        }
+    },
+    "template": "{\n  \"usuario\": {\n    \"id\": \"{{usuario_id}}\",\n    \"login\": \"{{nome_usuario}}\",\n    \"contato\": {\n      \"email\": \"{{email_usuario}}\"\n    },\n    \"endereco\": {\n      \"rua\": \"{{endereco_rua}}\",\n      \"numero\": {{endereco_numero}},\n      \"cidade\": \"{{endereco_cidade}}\",\n      \"estado\": \"{{endereco_estado}}\"\n    }\n  },\n  \"pedido\": {\n    \"id\": \"{{pedido_id}}\",\n    \"data\": \"{{pedido_data}}\",\n    \"valor_total\": {{pedido_total}},\n    \"itens\": [\n      {\n        \"produto\": {\n          \"id\": \"{{produto_id}}\",\n          \"nome\": \"{{produto_nome}}\"\n        },\n        \"quantidade\": {{produto_quantidade}},\n        \"preco_unitario\": {{produto_preco}}\n      }\n    ]\n  }\n}"
+}

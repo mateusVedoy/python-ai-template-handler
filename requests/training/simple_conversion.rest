@@ -1,0 +1,33 @@
+
+## POST para enviar documento de treinamento ao modelo
+
+POST http://127.0.0.1:8000/template/example
+Content-Type: application/json
+
+{
+	"alias": "converte_pessoa_personal_information",
+	"description": "Transforma um json simples com dados de pessoa e endereço em json que destingue dados pessoais de endereço da pessoa.",
+	"input": {
+		"name": "John",
+		"age": 30,
+		"address": {
+			"city": "New York",
+			"zip": "10001"
+		}
+	},
+	"output": {
+		"personal_information": {
+			"name": "John",
+			"age": 30
+		},
+		"location": {
+			"city": {
+				"name": "New York"
+			},
+			"zipcode": {
+				"code": "10001"
+			}
+		}
+	},
+	"template": "{\n  \"personal_information\": {\n\t\t\"name\": \"{{name}}\",\n\t\t\"age\": \"{{age}}\"\n\t},\n  \"location\": {\n\t\t\"city\": {\n\t\t\t\"name\": \"{{address.city}}\"\n\t\t},\n\t\t\"zipcode\": {\n\t\t\t\"code\": \"{{address.zip}}\"\n\t\t}\n\t}\n}"
+}

@@ -1,0 +1,87 @@
+
+POST http://127.0.0.1:8000/template/example
+Content-Type: application/json
+
+{
+    "alias": "converte_entregas_em_rota_entregas",
+	"description": "template para converter lista de entregas com destinatários e endereços em rota de entregas com informações chave de destinatário e endereço.",
+    "input": {
+		"deliveries": [
+			{
+				"cliente": {
+					"id": 445,
+					"fullname": "John Doe",
+					"address": {
+						"uf": "SP",
+						"city": "São Caetano",
+						"neighborhood": "Figueiras",
+						"streetNumber": 2385,
+						"zipcode": "2939429"
+					}
+				},
+				"order": {
+					"id": 123,
+					"status": "DELIVERING",
+					"observation": "Em rota de entrega",
+					"items": [
+						{
+							"id": 12
+						},
+						{
+							"id": 8
+						}
+					]
+				}
+			},
+			{
+				"cliente": {
+					"id": 509,
+					"fullname": "Marie Gute",
+					"address": {
+						"uf": "SP",
+						"city": "São Lourenço",
+						"neighborhood": "Bananeiras",
+						"streetNumber": 12,
+						"zipcode": "345646"
+					}
+				},
+				"order": {
+					"id": 778,
+					"status": "DELIVERING",
+					"observation": "Em rota de entrega",
+					"items": [
+						{
+							"id": 7
+						}
+					]
+				}
+			}
+		]
+	},
+    "output": {
+		"route": [
+			{
+				"uf": "SP",
+				"delivery_order": [
+					{
+						"receiver": "John Doe",
+						"address": {
+							"neighborhood": "Figueiras",
+							"streetNumber": 2385,
+							"zipcode": "2939429"
+						}
+					},
+					{
+						"receiver": "Marie Gute",
+						"address": {
+							"neighborhood": "Bananeiras",
+							"streetNumber": 12,
+							"zipcode": "345646"
+						}
+					}
+				]
+			}
+		]
+	},
+    "template": "{\n  \"route\": [\n    {\n      \"uf\": \"{{deliveries.0.cliente.address.uf}}\",\n      \"delivery_order\": [\n          {{#each deliveries}}\n          {\n          \"receiver\": \"{{this.cliente.fullname}}\",\n          \"address\": {\n              \"neighborhood\": \"{{this.cliente.address.neighborhood}}\",\n              \"streetNumber\": \"{{this.cliente.address.streetNumber}}\",\n              \"zipcode\": \"{{this.cliente.address.zipcode}}\"\n          }\n          }{{^@last}},{{/@last}}\n          {{/each}}\n      ]\n    }\n  ]\n}"
+}

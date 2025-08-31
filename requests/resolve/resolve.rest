@@ -1,0 +1,121 @@
+
+# POST para gerar template a partir de um input e um output
+
+# POST http://127.0.0.1:8000/template/resolve
+# Content-Type: application/json
+
+# {
+# 	"description": "Preciso de um template que converta o input informado no output passado.",
+# 	"input": {
+# 		"name": "John",
+# 		"age": 30,
+# 		"address": {
+# 			"city": "New York",
+# 			"zip": "10001"
+# 		}
+# 	},
+# 	"output": {
+# 		"personal_information": {
+# 			"name": "John",
+# 			"age": 30
+# 		},
+# 		"location": {
+# 			"city": {
+# 				"name": "New York"
+# 			},
+# 			"zipcode": {
+# 				"code": "10001"
+# 			}
+# 		}
+# 	}
+# }
+
+
+
+
+# Resolve modelo com listas
+
+POST http://127.0.0.1:8000/template/resolve
+Content-Type: application/json
+
+{
+	"description": "Preciso converter minhas entregas (meu input) em uma rota de entregas conforme está o output.",
+	"input": {
+		"deliveries": [
+			{
+				"cliente": {
+					"id": 445,
+					"fullname": "John Doe",
+					"address": {
+						"uf": "SP",
+						"city": "São Caetano",
+						"neighborhood": "Figueiras",
+						"streetNumber": 2385,
+						"zipcode": "2939429"
+					}
+				},
+				"order": {
+					"id": 123,
+					"status": "DELIVERING",
+					"observation": "Em rota de entrega",
+					"items": [
+						{
+							"id": 12
+						},
+						{
+							"id": 8
+						}
+					]
+				}
+			},
+			{
+				"cliente": {
+					"id": 509,
+					"fullname": "Marie Gute",
+					"address": {
+						"uf": "SP",
+						"city": "São Lourenço",
+						"neighborhood": "Bananeiras",
+						"streetNumber": 12,
+						"zipcode": "345646"
+					}
+				},
+				"order": {
+					"id": 778,
+					"status": "DELIVERING",
+					"observation": "Em rota de entrega",
+					"items": [
+						{
+							"id": 7
+						}
+					]
+				}
+			}
+		]
+	},
+	"output": {
+		"route": [
+			{
+				"uf": "SP",
+				"delivery_order": [
+					{
+						"receiver": "John Doe",
+						"address": {
+							"neighborhood": "Figueiras",
+							"streetNumber": 2385,
+							"zipcode": "2939429"
+						}
+					},
+					{
+						"receiver": "Marie Gute",
+						"address": {
+							"neighborhood": "Bananeiras",
+							"streetNumber": 12,
+							"zipcode": "345646"
+						}
+					}
+				]
+			}
+		]
+	}
+}

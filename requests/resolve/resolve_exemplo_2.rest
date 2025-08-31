@@ -1,0 +1,54 @@
+
+# Resolve modelo com listas
+POST http://127.0.0.1:8000/template/resolve
+Content-Type: application/json
+
+{
+	"description": "Preciso que o input passado seja transformado do output informado. Para isso preciso que me gere um template handlebars dessa conversão",
+	"input": {
+		"usuario_id": "usr123",
+		"nome_usuario": "joao_silva",
+		"email_usuario": "joao.silva@example.com",
+		"endereco_rua": "Rua das Flores",
+		"endereco_numero": 123,
+		"endereco_cidade": "São Paulo",
+		"endereco_estado": "SP",
+		"pedido_id": "ped456",
+		"pedido_data": "2024-08-29",
+		"pedido_total": 150.75,
+		"produto_id": "prod789",
+		"produto_nome": "Fone de Ouvido Bluetooth",
+		"produto_quantidade": 1,
+		"produto_preco": 150.75
+	},
+	"output": {
+		"usuario": {
+			"id": "usr123",
+			"login": "joao_silva",
+			"contato": {
+				"email": "joao.silva@example.com"
+			},
+			"endereco": {
+				"rua": "Rua das Flores",
+				"numero": 123,
+				"cidade": "São Paulo",
+				"estado": "SP"
+			}
+		},
+		"pedido": {
+			"id": "ped456",
+			"data": "2024-08-29",
+			"valor_total": 150.75,
+			"itens": [
+				{
+					"produto": {
+						"id": "prod789",
+						"nome": "Fone de Ouvido Bluetooth"
+					},
+					"quantidade": 1,
+					"preco_unitario": 150.75
+				}
+			]
+		}
+	}
+}

@@ -40,8 +40,8 @@ A forma mais simples de rodar o projeto é utilizando o Dev Container, que encap
 #### 1. Clonar o Repositório
 
 ```bash
-git clone <repo>
-cd <repo>
+git clone /python-ai-template-handler.git
+cd  python-ai-template-handler
 ```
 
 #### 2. Configurar Variáveis de Ambiente

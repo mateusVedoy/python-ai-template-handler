@@ -90,16 +90,32 @@ Isso iniciará o servidor Uvicorn com o debugger do VS Code anexado, permitindo 
 
 A aplicação expõe endpoints para interagir com o modelo de IA.
 
-#### Gerar exemplo de template:
+#### Gerar exemplo de template
 
-Endpoint: **POST** _/template/example_
+- **Endpoint:** **POST** `/template/example`
+- **Finalidade:** Fornece um exemplo de entrada e saída desejada, bem como o template Handlebars responsável por realizar a conversão.
 
-Finalidade: Fornece um exemplo de entrada para saída desejada bem como o template handlebars responsável por realizar a conversão.
+---
 
-#### Gerar template:
+#### Gerar template (modo **síncrono**)
 
-Endpoint: POST /template/generate
+- **Endpoint:** **POST** `/template/generate`
+- **Finalidade:** Gera um template Handlebars imediatamente, a partir de uma entrada e sua saída esperada.
+- **Observação:** O template é retornado na mesma requisição, seguindo a documentação oficial do Handlebars e possíveis exemplos previamente cadastrados.
 
-Finalidade: Fornece uma entrada bem como sua saída esperada. A api deverá fornecer as informações necessárias para que o agente generativo possa gerar o template com base na documentação oficial do handlebars e possíveis exemplos previamente cadastrados na api.
+---
 
-#### 📚 Para exemplos práticos de como chamar esses endpoints, consulte os arquivos na pasta /requests do projeto.
+#### Gerar template (modo **assíncrono**)
+
+- **Endpoint:** **POST** `/template/resolve/async`
+- **Finalidade:** Gera um template Handlebars de forma assíncrona.
+  - Antes de entregar o template ao usuário, a aplicação **testa** automaticamente o resultado.
+  - Caso o template esteja incorreto, o sistema tenta ajustá-lo **até 3 vezes**.
+  - Ao final, é gerado um **report** com o histórico do processo.
+- **Consulta do resultado:** Após a requisição, o usuário pode buscar o report para obter o template final validado.
+
+---
+
+#### 📚 Exemplos práticos
+
+Para exemplos de chamadas HTTP (payloads e respostas), consulte os arquivos na pasta **/requests** do projeto.

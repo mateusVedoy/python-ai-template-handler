@@ -51,7 +51,7 @@ Crie um arquivo chamado **.env** na raiz do projeto, seguindo o modelo:
 ```
 GEMINI_API_KEY=xxx
 GEMINI_MODEL=gemini-2.5-flash
-GEMINI_EMBEDDING_MODEL=models/embedding-001
+GEMINI_EMBEDDING_MODEL=all-MiniLM-L6-v2
 ```
 
 🔒 Precisa gerar sua chave api do gemini. **SEMPRE** a mantenha segura e não a compartilhe!

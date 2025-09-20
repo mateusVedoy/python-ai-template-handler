@@ -1,7 +1,9 @@
 
+import time
+from src.infraestructure.log.logAdapter import LogAdapter
 from src.application.dto import ApiResponse, MappingDTO
 from src.domain.mapping import Mapping
-from src.infraestructure.mongo import MappingRepository
+from src.infraestructure.mongo.mongo import MappingRepository
 
 #
 # entender se salva embedding da descrição tbm na base
@@ -21,26 +23,53 @@ from src.infraestructure.mongo import MappingRepository
 class MapExample:
 
     repository: MappingRepository
+    logAdapter: LogAdapter
 
-    def __init__(self, repository: MappingRepository):
+    def __init__(self, repository: MappingRepository, logAdapter: LogAdapter):
         self.repository = repository
+        self.logAdapter = logAdapter
 
     def execute(
         self,
         example: MappingDTO
     ) -> ApiResponse:
 
-        mapping = Mapping(
-            example.alias,
-            example.description,
-            example.input,
-            example.output,
-            example.template
-        )
+        try:
 
-        self.repository.save(mapping)
+            start = time.perf_counter()
 
-        return ApiResponse(
-            statusCode=201,
-            message="example template has been saved",
-            template="")
+            mapping = Mapping(
+                example.alias,
+                example.description,
+                example.input,
+                example.output,
+                example.template
+            )
+
+            self.repository.save(mapping)
+
+            self.logAdapter.template_example_generated(
+                example.alias,
+                "example of template has been generated",
+                self._generateProcessingTime(start)
+            )
+
+            return ApiResponse(
+                statusCode=201,
+                message="example template has been saved",
+                template="")
+
+        except Exception as e:
+
+            self.logAdapter.template_example_generation_error(
+                example.alias, e.__str__(), self._generateProcessingTime(start))
+
+            return ApiResponse(
+                statusCode=400,
+                message=e.__str__(),
+                template=""
+            )
+
+    def _generateProcessingTime(self, start_processing: float) -> float:
+        end_processing = time.perf_counter()
+        return end_processing - start_processing

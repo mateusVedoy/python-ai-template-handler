@@ -1,15 +1,27 @@
 
 from fastapi import Depends
-from src.infraestructure.semantic import AiSemantic
-from src.infraestructure.embedding import AiEmbedding
-from src.infraestructure.aiClient import AiClient
-from src.infraestructure.mongo import MappingRepository
+from src.infraestructure.log.logAdapter import LogAdapter
+from src.infraestructure.handlebars.handlebars import Handlebars
+from src.infraestructure.ai.semantic import AiSemantic
+from src.infraestructure.ai.aiClient import AiClient
+from src.infraestructure.ai.embedding import AiEmbedding
+
+from src.infraestructure.mongo.mongo import MappingRepository, ReportRepository
 from src.useCase.mapExample import MapExample
-from src.useCase.resolveTemplate import ResolveTemplate
+from src.useCase.resolveTemplateAsync import ResolveTemplateAsync
+from src.useCase.resolveTemplateSync import ResolveTemplateSync
 
 
 def get_mappingRepository() -> MappingRepository:
     return MappingRepository()
+
+
+def get_logAdapter() -> LogAdapter:
+    return LogAdapter()
+
+
+def get_reportRepository() -> ReportRepository:
+    return ReportRepository()
 
 
 def get_aiClient() -> AiClient:
@@ -24,21 +36,50 @@ def get_aiSemantic() -> AiSemantic:
     return AiSemantic()
 
 
+def get_Handlebars_validator() -> Handlebars:
+    return Handlebars()
+
+
 def get_mapExample_useCase(
-    repo: MappingRepository = Depends(get_mappingRepository)
+    repo: MappingRepository = Depends(get_mappingRepository),
+    log: LogAdapter = Depends(get_logAdapter)
 ) -> MapExample:
-    return MapExample(repo)
+    return MapExample(repo, log)
 
 
 def get_resolveTemplate_useCase(
     repo: MappingRepository = Depends(get_mappingRepository),
+    report_repo: ReportRepository = Depends(get_reportRepository),
     aiClient: AiClient = Depends(get_aiClient),
     embedding: AiEmbedding = Depends(get_aiEmbedding),
-    semantic: AiSemantic = Depends(get_aiSemantic)
-) -> ResolveTemplate:
-    return ResolveTemplate(
+    semantic: AiSemantic = Depends(get_aiSemantic),
+    log: LogAdapter = Depends(get_logAdapter)
+) -> ResolveTemplateSync:
+    return ResolveTemplateSync(
         repo,
+        report_repo,
         aiClient,
         embedding,
-        semantic
+        semantic,
+        log
+    )
+
+
+def get_resolveTemplateAsync_useCase(
+    repo: MappingRepository = Depends(get_mappingRepository),
+    report_repo: ReportRepository = Depends(get_reportRepository),
+    aiClient: AiClient = Depends(get_aiClient),
+    embedding: AiEmbedding = Depends(get_aiEmbedding),
+    semantic: AiSemantic = Depends(get_aiSemantic),
+    handlebars: Handlebars = Depends(get_Handlebars_validator),
+    logAdapter: LogAdapter = Depends(get_logAdapter)
+) -> ResolveTemplateSync:
+    return ResolveTemplateAsync(
+        repo,
+        report_repo,
+        aiClient,
+        embedding,
+        semantic,
+        handlebars,
+        logAdapter
     )

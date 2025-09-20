@@ -1,5 +1,5 @@
-import google.generativeai as genai
 from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer
 import numpy as np
 import os
 
@@ -9,7 +9,8 @@ class AiSemantic:
     task_type: str
 
     def __init__(self):
-        self.embedding = os.getenv("GEMINI_EMBEDDING_MODEL")
+        embedding_model = os.getenv("EMBEDDING_MODEL")
+        self.embedding = SentenceTransformer(embedding_model)
         self.task_type = "retrieval_query"
 
     def find_relevant_chunks(self, prompt, chunks, embed_chunk, top_k=3) -> list:
@@ -17,10 +18,8 @@ class AiSemantic:
         if len(chunks) == 0:
             return []
 
-        query_embedding = genai.embed_content(
-            model=self.embedding,
-            content=prompt,
-            task_type=self.task_type)['embedding']
+        query_embedding = self.embedding.encode(
+            [prompt], convert_to_numpy=True)
 
         query_embedding = np.array(query_embedding).reshape(1, -1)
 

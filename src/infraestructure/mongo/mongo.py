@@ -1,6 +1,7 @@
 
 from pymongo import MongoClient
 
+from src.domain.report import Report
 from src.domain.mapping import Mapping
 
 
@@ -36,3 +37,16 @@ class MappingRepository:
             mappings.append(mapping)
 
         return mappings
+
+
+class ReportRepository:
+    colletion: any
+
+    def __init__(self):
+        client = MongoClient(
+            "mongodb://admin:admin@127.0.0.1:27017/?authSource=admin")
+        db = client["template"]
+        self.collection = db["reports"]
+
+    def save(self, report: Report) -> None:
+        self.collection.insert_one(report.to_dict())

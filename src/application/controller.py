@@ -1,14 +1,15 @@
 
 import uuid
-from fastapi import APIRouter, Depends, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from fastapi.responses import JSONResponse
 
-from src.dependencies import get_mapExample_useCase, get_resolveTemplate_useCase, get_resolveTemplateAsync_useCase
+from src.dependencies import get_mapExample_useCase, get_resolveTemplate_useCase, get_resolveTemplateAsync_useCase, get_template_str_useCase
 from src.application.dto import ApiResponse, MappingDTO, ResolveDTO
 from src.domain.exception import MappingBusinessException
 from src.useCase.mapExample import MapExample
 from src.useCase.resolveTemplateAsync import ResolveTemplateAsync
 from src.useCase.resolveTemplateSync import ResolveTemplateSync
+from src.useCase.getTemplateString import GetTemplateString
 
 
 router = APIRouter(prefix="/template", tags=["router"])
@@ -65,6 +66,21 @@ async def resolve_async_template(
         print(e)
     except Exception as e:
         print(e)
+
+
+@router.get("/async/{processing_template_id}", response_model=ApiResponse)
+async def get_template_str_async(
+    processing_template_id: str,
+    get_template_str: GetTemplateString = Depends(get_template_str_useCase)
+) -> ApiResponse:
+
+    if not processing_template_id:
+        raise HTTPException(
+            status_code=400,
+            detail="cannot get template without identifier processing")
+
+    return get_template_str.get(processing_template_id)
+
 
 # TER RECURSO PARA ADICIONAR FUNÇÕES DISPONÍVEIS PARA USAR NOS TEMPLATES
 # neste caso preciso garantir que haverá explicação sobre o que a função faz

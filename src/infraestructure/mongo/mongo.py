@@ -50,3 +50,19 @@ class ReportRepository:
 
     def save(self, report: Report) -> None:
         self.collection.insert_one(report.to_dict())
+
+    def findByIdentifier(self, identifier: str) -> Report:
+        model = self.collection.find_one({"identifier": identifier})
+
+        if not model:
+            return None
+
+        report = Report(
+            model['identifier'],
+            model['processingTime'],
+            model['status'],
+            model['message'],
+            model['template']
+        )
+
+        return report

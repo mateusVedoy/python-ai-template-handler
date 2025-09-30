@@ -10,6 +10,7 @@ from src.infraestructure.mongo.mongo import MappingRepository, ReportRepository
 from src.useCase.mapExample import MapExample
 from src.useCase.resolveTemplateAsync import ResolveTemplateAsync
 from src.useCase.resolveTemplateSync import ResolveTemplateSync
+from src.useCase.getTemplateString import GetTemplateString
 
 
 def get_mappingRepository() -> MappingRepository:
@@ -45,6 +46,12 @@ def get_mapExample_useCase(
     log: LogAdapter = Depends(get_logAdapter)
 ) -> MapExample:
     return MapExample(repo, log)
+
+
+def get_template_str_useCase(
+    report_repo: ReportRepository = Depends(get_reportRepository)
+) -> GetTemplateString:
+    return GetTemplateString(report_repo)
 
 
 def get_resolveTemplate_useCase(

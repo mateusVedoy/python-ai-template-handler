@@ -114,6 +114,11 @@ A aplicação expõe endpoints para interagir com o modelo de IA.
   - Ao final, é gerado um **report** com o histórico do processo.
 - **Consulta do resultado:** Após a requisição, o usuário pode buscar o report para obter o template final validado.
 
+#### Buscar template gerado assincronamente
+
+- **Endpoint:** **GET** `/template/resolve/async/{processingId}`
+- **Finalidade:** Buscar template gerado assíncronamente pelo caso de uso acima
+
 ---
 
 #### 📚 Exemplos práticos

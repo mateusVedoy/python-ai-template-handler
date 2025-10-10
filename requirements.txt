@@ -12,3 +12,4 @@ scikit-learn
 pymongo
 pybars3
 sentence_transformers
+pytest

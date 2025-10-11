@@ -14,21 +14,18 @@ class TestHandlebars:
         Cenário 1: Valida um template Handlebars que é compilado e
         gera a saída esperada corretamente.
         """
-        # Arrange (Organização)
+
         handlebars = Handlebars()
         template = '{"message": "Hello, {{name}}!"}'
         template_input = {"name": "World"}
         expected_output = {"message": "Hello, World!"}
 
-        # Act (Ação)
-        # Chamamos o método que, em caso de sucesso, não deve levantar exceção.
         try:
             handlebars.validate(template, template_input, expected_output)
             validation_passed = True
         except Exception:
             validation_passed = False
 
-        # Assert (Verificação)
         assert validation_passed, "A validação falhou em alguma exception lançada"
 
     def test_should_validate_template_with_error(self):

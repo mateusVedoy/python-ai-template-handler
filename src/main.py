@@ -1,4 +1,4 @@
-
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 import uvicorn
 from dotenv import load_dotenv
@@ -10,6 +10,23 @@ load_dotenv()
 app = FastAPI()
 
 app.include_router(controller.router)
+
+origins = [
+    "null",
+    "http://localhost",
+    "http://localhost:8000",
+    "http://127.0.0.1",
+    "http://127.0.0.1:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,          # Permite as origens da lista acima
+    allow_credentials=True,
+    # Permite todos os métodos (GET, POST, OPTIONS, etc.)
+    allow_methods=["*"],
+    allow_headers=["*"],            # Permite todos os cabeçalhos
+)
 
 if __name__ == "__main__":
     uvicorn.run(

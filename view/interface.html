@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Template Handlebars</title>
+    <style>
+        /* Estilos Gerais */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+        
+        /* Formulário */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: 'Courier New', Courier, monospace;
+            box-sizing: border-box; /* Garante que padding não afete a largura total */
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        .json-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .json-box {
+            flex: 1;
+            min-width: 300px; /* Garante que não fiquem muito espremidos */
+        }
+
+        textarea {
+            height: 300px;
+            resize: vertical;
+        }
+
+        /* Botão */
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        button:disabled {
+            background-color: #a0c3e6;
+            cursor: not-allowed;
+        }
+
+        /* Área de Resultado */
+        .result-container {
+            margin-top: 30px;
+            display: none; /* Começa escondido */
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            white-space: pre-wrap; /* Quebra de linha automática */
+            word-wrap: break-word; /* Quebra de palavras longas */
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+        }
+
+        /* Mensagens de Status */
+        #status-message {
+            text-align: center;
+            padding: 12px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            display: none; /* Começa escondido */
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Gerador de Template Handlebars</h1>
+        <p class="subtitle">Cole seu JSON de entrada e o JSON de saída desejado para gerar o template de conversão.</p>
+
+        <form id="template-form">
+            <div class="form-group">
+                <label for="description">Descrição da Conversão</label>
+                <input type="text" id="description" placeholder="Ex: Converter minhas entregas em uma rota de entregas." required>
+            </div>
+            
+            <div class="json-container">
+                <div class="form-group json-box">
+                    <label for="input-json">Input JSON</label>
+                    <textarea id="input-json" placeholder="Cole o JSON de entrada aqui..." required></textarea>
+                </div>
+                <div class="form-group json-box">
+                    <label for="output-json">Output JSON Desejado</label>
+                    <textarea id="output-json" placeholder="Cole o JSON de saída desejado aqui..." required></textarea>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn">Gerar Template</button>
+        </form>
+
+        <div id="status-message"></div>
+
+        <div class="result-container" id="result-container">
+            <h2>Template Gerado:</h2>
+            <pre><code id="result-template"></code></pre>
+        </div>
+    </div>
+
+    <script>
+        // Seleciona os elementos do DOM
+        const form = document.getElementById('template-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const descriptionInput = document.getElementById('description');
+        const inputJsonText = document.getElementById('input-json');
+        const outputJsonText = document.getElementById('output-json');
+        const statusMessage = document.getElementById('status-message');
+        const resultContainer = document.getElementById('result-container');
+        const resultTemplate = document.getElementById('result-template');
+
+        // Adiciona um listener para o evento de submit do formulário
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Impede o recarregamento da página
+
+            // Reseta a interface para um novo envio
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Gerando...';
+            statusMessage.style.display = 'none';
+            resultContainer.style.display = 'none';
+            statusMessage.className = '';
+
+            let inputJson, outputJson;
+
+            // 1. Valida o JSON de entrada
+            try {
+                inputJson = JSON.parse(inputJsonText.value);
+            } catch (error) {
+                showError('O JSON de Input é inválido. Por favor, verifique a formatação.');
+                return;
+            }
+
+            // 2. Valida o JSON de saída
+            try {
+                outputJson = JSON.parse(outputJsonText.value);
+            } catch (error) {
+                showError('O JSON de Output é inválido. Por favor, verifique a formatação.');
+                return;
+            }
+
+            // 3. Monta o corpo da requisição
+            const requestBody = {
+                description: descriptionInput.value,
+                input: inputJson,
+                output: outputJson
+            };
+
+            // 4. Envia a requisição para a API
+            try {
+                const response = await fetch('http://127.0.0.1:8000/template/resolve', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    // Trata erros de HTTP (ex: 404, 500)
+                    throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                // 5. Exibe o resultado com sucesso
+                showSuccess(data.message);
+                resultTemplate.textContent = data.template;
+                resultContainer.style.display = 'block';
+
+            } catch (error) {
+                // Trata erros de rede ou da lógica da API
+                showError(`Não foi possível conectar à API. Verifique se ela está rodando e acessível. Detalhes: ${error.message}`);
+            } finally {
+                // Reabilita o botão independentemente do resultado
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Gerar Template';
+            }
+        });
+
+        // Funções auxiliares para exibir mensagens
+        function showMessage(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = type;
+            statusMessage.style.display = 'block';
+        }
+
+        function showError(message) {
+            showMessage(message, 'error');
+            // Reabilita o botão em caso de erro de validação
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Gerar Template';
+        }
+        
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+
+    </script>
+
+</body>
+</html>

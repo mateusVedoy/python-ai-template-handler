@@ -37,6 +37,6 @@
       ]
     }
   },
-  "postCreateCommand": "pip install --upgrade pip && pip install autopep8 pylint black flake8 bandit fastapi uvicorn google-generativeai python-dotenv numpy scikit-learn pymongo pybars3 sentence_transformers pytest",
+  "postCreateCommand": "pip install --upgrade pip && pip install autopep8 pylint black flake8 bandit fastapi uvicorn google-generativeai python-dotenv numpy scikit-learn pymongo pybars3 sentence_transformers pytest pytest-mock",
   "remoteUser": "vscode"
 }

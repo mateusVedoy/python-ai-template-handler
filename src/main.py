@@ -1,15 +1,25 @@
+import pathlib
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 from dotenv import load_dotenv
 
-from src.application import controller
+from src.application import controller, view_controller
 
 load_dotenv()
 
 app = FastAPI()
 
+CURRENT_FILE_DIR = pathlib.Path(__file__).parent
+BASE_DIR = CURRENT_FILE_DIR.parent
+VIEW_DIR = BASE_DIR / "view"
+STATIC_DIR = VIEW_DIR / "static"
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
 app.include_router(controller.router)
+app.include_router(view_controller.view_router)
 
 origins = [
     "null",

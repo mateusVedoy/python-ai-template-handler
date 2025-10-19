@@ -1,7 +1,7 @@
 
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import JSONResponse
 
 from src.dependencies import get_mapExample_useCase, get_resolveTemplate_useCase, get_resolveTemplateAsync_useCase, get_template_str_useCase
 from src.application.dto import ApiResponse, MappingDTO, ResolveDTO
@@ -13,17 +13,6 @@ from src.useCase.getTemplateString import GetTemplateString
 
 
 router = APIRouter(prefix="/template", tags=["router"])
-
-
-# expõe interface para api
-
-@router.get("/", response_class=HTMLResponse)
-async def interface():
-
-    with open("view/interface.html") as f:
-        html_content = f.read()
-
-    return HTMLResponse(content=html_content, status_code=200)
 
 
 @router.post("/example", response_model=ApiResponse)

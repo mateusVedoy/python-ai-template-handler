@@ -11,3 +11,11 @@ async def interface():
         html_content = f.read()
 
     return HTMLResponse(content=html_content, status_code=200)
+
+@view_router.get("/async", response_class=HTMLResponse)
+async def interface():
+
+    with open("view/interface_async.html") as f:
+        html_content = f.read()
+
+    return HTMLResponse(content=html_content, status_code=200)

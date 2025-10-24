@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Template</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1, h2 {
+            color: #444;
+        }
+
+        /* Formulário */
+        #template-form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Garante que o padding não afete a largura */
+        }
+
+        .json-editors {
+            display: flex;
+            gap: 20px;
+        }
+
+        .json-editors > div {
+            flex: 1; /* Faz as duas textareas terem a mesma largura */
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+            display: none; /* Oculto por padrão */
+        }
+
+        /* Cards de Processamento */
+        #card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .template-card {
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
+            min-width: 250px;
+        }
+
+        .template-card.pending {
+            background-color: #fff;
+            border-left: 5px solid #ffc107; /* Amarelo */
+        }
+        .template-card.pending:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .template-card.completed {
+            background-color: #f0fff4; /* Verde claro */
+            border-left: 5px solid #28a745; /* Verde */
+        }
+
+        .template-card.error {
+            background-color: #fff6f6; /* Vermelho claro */
+            border-left: 5px solid #dc3545; /* Vermelho */
+        }
+
+        .card-id {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85em;
+            color: #666;
+            word-break: break-all;
+        }
+
+        /* Área de Resultado */
+        #template-result {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gerador de Template Assíncrono</h1>
+
+    <form id="template-form">
+        <div class="form-group">
+            <label for="description">Descrição (Opcional)</label>
+            <input type="text" id="description" placeholder="Ex: Mapeamento de usuário">
+        </div>
+
+        <div class="json-editors">
+            <div class="form-group">
+                <label for="json-input">JSON de Entrada (Input)</label>
+                <textarea id="json-input" rows="15" placeholder="{ ... }"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="json-output">JSON de Saída (Output)</label>
+                <textarea id="json-output" rows="15" placeholder="{ ... }"></textarea>
+            </div>
+        </div>
+
+        <button type="submit">Gerar Template</button>
+        <p id="form-error" class="error-message"></p>
+    </form>
+
+    <h2>Processamentos em Andamento</h2>
+    <p>Clique em um card para tentar buscar o resultado.</p>
+    <div id="card-container">
+        </div>
+
+    <h2>Visualizador de Template</h2>
+    <pre id="template-result" style="display: none;"><code>Selecione um card concluído para ver o template...</code></pre>
+
+    <script src="/static/js/interface_async.js"></script>
+</body>
+</html>
